@@ -4,13 +4,14 @@ import (
 	"github.com/41x3n/Xom/shared"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/pkg/errors"
+	"log"
 )
 
 type telegram struct {
 	API *tgbotapi.BotAPI
 }
 
-func (t *telegram) PollForUpdates(env *shared.Env, rootHandler shared.RootHandlerInterface) error {
+func (t *telegram) PollForUpdates(env *shared.Env, rootHandler shared.RootHandlerInterface) {
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 60
 
@@ -20,14 +21,12 @@ func (t *telegram) PollForUpdates(env *shared.Env, rootHandler shared.RootHandle
 		if update.Message == nil {
 			continue
 		}
-		// Handle each update. If an error occurs, return it.
+		// Handle each update. If an error occurs, log it.
 		err := rootHandler.HandleMessages(update)
 		if err != nil {
-			return errors.Wrap(err, "error handling update")
+			log.Printf("Error handling update: %v", errors.Wrap(err, "error handling update"))
 		}
 	}
-
-	return nil
 }
 
 func (t *telegram) GetAPI() *tgbotapi.BotAPI {

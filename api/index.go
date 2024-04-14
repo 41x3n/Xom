@@ -3,25 +3,35 @@ package api
 import (
 	"github.com/41x3n/Xom/shared"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"github.com/pkg/errors"
+	"gorm.io/gorm"
 )
 
 type rootHandler struct {
 	env      *shared.Env
 	telegram shared.TelegramService
+	db       *gorm.DB
 }
 
 func (h *rootHandler) HandleMessages(update tgbotapi.Update) error {
-	tg := h.telegram.GetAPI()
-	// echo back the message
-	msg := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
-	_, err := tg.Send(msg)
-	if err != nil {
-		return errors.Wrap(err, "error sending message")
+	message := update.Message
+	user, userErr := checkIfUserExists(message.From, h.db)
+	if userErr != nil {
+		return userErr
 	}
-	return nil
+
+	var err error
+	if message.IsCommand() {
+		command := update.Message.Command()
+		switch command {
+		case "start":
+			err = h.HandleStartCommand(user, message)
+		}
+	}
+
+	return err
 }
 
-func NewRootHandler(env *shared.Env, telegram shared.TelegramService) shared.RootHandlerInterface {
-	return &rootHandler{env: env, telegram: telegram}
+func NewRootHandler(env *shared.Env, telegram shared.TelegramService, db *gorm.DB,
+) shared.RootHandlerInterface {
+	return &rootHandler{env: env, telegram: telegram, db: db}
 }
