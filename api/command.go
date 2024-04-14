@@ -15,3 +15,24 @@ func (h *rootHandler) HandleStartCommand(user *domain.User, message *tgbotapi.Me
 
 	return err
 }
+
+func (h *rootHandler) HandleHelpCommand(user *domain.User, message *tgbotapi.Message) error {
+	telegramAPI := h.telegram.GetAPI()
+
+	hc := controller.NewHelpController(telegramAPI)
+
+	err := hc.HandleHelpCommand(user, message)
+
+	return err
+}
+
+func (h *rootHandler) HandlePhotoCommand(user *domain.User, message *tgbotapi.Message) error {
+	telegramAPI := h.telegram.GetAPI()
+
+	pc := controller.NewPhotoController(telegramAPI)
+
+	err := pc.HandlePhotoCommand(user, message)
+
+	return err
+
+}

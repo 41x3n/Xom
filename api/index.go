@@ -4,6 +4,7 @@ import (
 	"github.com/41x3n/Xom/shared"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"gorm.io/gorm"
+	"strings"
 )
 
 type rootHandler struct {
@@ -25,9 +26,14 @@ func (h *rootHandler) HandleMessages(update tgbotapi.Update) error {
 		switch command {
 		case "start":
 			err = h.HandleStartCommand(user, message)
+		case "help":
+			err = h.HandleHelpCommand(user, message)
 		}
 	}
 
+	if message.Photo != nil || (message.Document != nil && strings.Contains(message.Document.MimeType, "image/")) {
+		err = h.HandlePhotoCommand(user, message)
+	}
 	return err
 }
 

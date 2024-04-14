@@ -19,4 +19,6 @@ type TelegramService interface {
 type RootHandlerInterface interface {
 	HandleMessages(update tgbotapi.Update) error
 	HandleStartCommand(user *domain.User, message *tgbotapi.Message) error
+	HandleHelpCommand(user *domain.User, message *tgbotapi.Message) error
+	HandlePhotoCommand(user *domain.User, message *tgbotapi.Message) error
 }
