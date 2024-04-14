@@ -9,6 +9,7 @@ type Env struct {
 	AppEnv           string `mapstructure:"APP_ENV"`
 	TelegramBotToken string `mapstructure:"TELEGRAM_BOT_TOKEN"`
 	DSN              string `mapstructure:"DSN"`
+	ContextTimeout   int    `mapstructure:"CONTEXT_TIMEOUT"`
 }
 
 type TelegramService interface {

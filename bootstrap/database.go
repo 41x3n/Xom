@@ -21,7 +21,7 @@ func NewPostgresDatabase(env *shared.Env) *gorm.DB {
 }
 
 func AutoMigrate(client *gorm.DB) {
-	err := client.AutoMigrate(&domain.User{})
+	err := client.AutoMigrate(&domain.User{}, &domain.Photo{})
 	shared.FailOnError(err, "Failed to auto migrate the database")
 
 	log.Println("Auto migration completed.")

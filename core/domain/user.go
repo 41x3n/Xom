@@ -8,7 +8,8 @@ import (
 )
 
 const (
-	TableUser = "users"
+	TableUser  = "users"
+	TablePhoto = "photos"
 )
 
 type User struct {
@@ -19,8 +20,8 @@ type User struct {
 	LastName     *string
 	UserName     *string
 	LanguageCode *string
-	IsActive     bool `gorm:"default:true"`
-	//Photos       []Photo `gorm:"foreignKey:UserTelegramID;references:TelegramID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL"`
+	IsActive     bool    `gorm:"default:true"`
+	Photos       []Photo `gorm:"foreignKey:UserTelegramID;references:TelegramID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL"`
 }
 
 type UserRepository interface {
