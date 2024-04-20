@@ -50,3 +50,17 @@ func (cu *CallbackUseCase) GetPhotoByID(photoId string) (*domain.Photo, error) {
 
 	return photo, err
 }
+
+func (cu *CallbackUseCase) MarkPhotoAsProcessing(photo *domain.Photo) error {
+	ctx, cancel := context.WithTimeout(context.Background(), cu.contextTimeout)
+	defer cancel()
+
+	photo.Status = domain.Processing
+	err := cu.photoRepo.UpdateStatus(ctx, photo)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

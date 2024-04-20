@@ -42,3 +42,8 @@ func (pr *photoRepository) GetByID(ctx context.Context,
 	result := pr.database.Where("id = ?", id).First(&photo)
 	return &photo, result.Error
 }
+
+func (pr *photoRepository) UpdateStatus(ctx context.Context, photo *domain.Photo) error {
+	result := pr.database.Save(photo)
+	return result.Error
+}

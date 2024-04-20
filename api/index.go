@@ -10,6 +10,7 @@ import (
 type rootHandler struct {
 	env      *shared.Env
 	telegram shared.TelegramService
+	rabbitMQ shared.RabbitMQService
 	db       *gorm.DB
 }
 
@@ -55,7 +56,9 @@ func (h *rootHandler) HandleMessages(update tgbotapi.Update, updateType shared.U
 	return err
 }
 
-func NewRootHandler(env *shared.Env, telegram shared.TelegramService, db *gorm.DB,
+func NewRootHandler(env *shared.Env, telegram shared.TelegramService,
+	rabbitMQ shared.RabbitMQService,
+	db *gorm.DB,
 ) shared.RootHandlerInterface {
-	return &rootHandler{env: env, telegram: telegram, db: db}
+	return &rootHandler{env: env, telegram: telegram, rabbitMQ: rabbitMQ, db: db}
 }

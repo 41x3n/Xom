@@ -45,12 +45,13 @@ func (h *rootHandler) HandlePhoto(user *domain.User, message *tgbotapi.Message) 
 
 func (h *rootHandler) HandleCallback(user *domain.User, callback *tgbotapi.CallbackQuery) error {
 	telegramAPI := h.telegram.GetAPI()
+	rabbitMQ := h.rabbitMQ
 	contextTimeout := time.Duration(h.env.ContextTimeout) * time.Second
 
 	pr := repository.NewPhotoRepository(h.db, domain.TablePhoto)
 	cu := usecase.NewCallbackUseCase(pr, contextTimeout)
 
-	cc := controller.NewCallbackController(cu, telegramAPI)
+	cc := controller.NewCallbackController(cu, telegramAPI, rabbitMQ)
 
 	err := cc.HandleCallback(callback)
 

@@ -43,6 +43,7 @@ type PhotoRepository interface {
 	FetchByUser(c context.Context, user *User) ([]Photo, error)
 	GetByFileID(c context.Context, fileID string) (Photo, error)
 	GetByID(c context.Context, id int64) (*Photo, error)
+	UpdateStatus(c context.Context, photo *Photo) error
 }
 
 type PhotoUseCase interface {

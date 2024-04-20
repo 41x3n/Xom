@@ -14,8 +14,11 @@ func main() {
 	app := bootstrap.NewApplication()
 
 	defer app.CloseDBConnection()
+	defer app.CloseRabbitMQ()
 
 	app.AutoMigrate()
+
+	go app.ConsumeMessages()
 
 	// Start polling Telegram in a goroutine
 	go app.PollForTelegramUpdates()
