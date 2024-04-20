@@ -20,7 +20,7 @@ type ApplicationInterface interface {
 }
 
 func (app *Application) PollForTelegramUpdates() {
-	app.Telegram.PollForUpdates(app.Env, app.RootHandler)
+	app.Telegram.PollForUpdates(app.RootHandler)
 }
 
 func NewApplication() ApplicationInterface {

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/41x3n/Xom/core/domain"
+	"github.com/41x3n/Xom/shared"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"strings"
 	"time"
@@ -69,7 +70,8 @@ func (pu *photoUsecase) SavePhotoId(user *domain.User, fileID,
 }
 
 func (pu *photoUsecase) GenerateConvertOptions(
-	ignoredFileType string) [][]tgbotapi.InlineKeyboardButton {
+	ignoredFileType string, photoID int64) [][]tgbotapi.
+	InlineKeyboardButton {
 	ignoredBtn := strings.ToLower(ignoredFileType)
 
 	var buttons [][]tgbotapi.InlineKeyboardButton
@@ -77,7 +79,9 @@ func (pu *photoUsecase) GenerateConvertOptions(
 
 	for i, fileType := range domain.FileTypeArray {
 		if fileType != ignoredBtn {
-			button := tgbotapi.NewInlineKeyboardButtonData(strings.ToUpper(fileType), fileType)
+			btnLabel := strings.ToUpper(fileType)
+			data := fmt.Sprintf("%d-%s", photoID, shared.PhotoCommand)
+			button := tgbotapi.NewInlineKeyboardButtonData(btnLabel, data)
 			row = append(row, button)
 		}
 		if len(row) == 2 || i == len(domain.FileTypeArray)-1 {

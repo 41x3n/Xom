@@ -34,3 +34,11 @@ func (pr *photoRepository) GetByFileID(ctx context.Context, fileID string) (doma
 	result := pr.database.Where("file_id = ?", fileID).First(&photo)
 	return photo, result.Error
 }
+
+func (pr *photoRepository) GetByID(ctx context.Context,
+	id int64) (*domain.Photo,
+	error) {
+	var photo domain.Photo
+	result := pr.database.Where("id = ?", id).First(&photo)
+	return &photo, result.Error
+}

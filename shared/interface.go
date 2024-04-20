@@ -14,12 +14,13 @@ type Env struct {
 
 type TelegramService interface {
 	GetAPI() *tgbotapi.BotAPI
-	PollForUpdates(env *Env, rootHandler RootHandlerInterface)
+	PollForUpdates(rootHandler RootHandlerInterface)
 }
 
 type RootHandlerInterface interface {
-	HandleMessages(update tgbotapi.Update) error
+	HandleMessages(update tgbotapi.Update, updateType UpdateType) error
 	HandleStartCommand(user *domain.User, message *tgbotapi.Message) error
 	HandleHelpCommand(user *domain.User, message *tgbotapi.Message) error
-	HandlePhotoCommand(user *domain.User, message *tgbotapi.Message) error
+	HandlePhoto(user *domain.User, message *tgbotapi.Message) error
+	HandleCallback(user *domain.User, callback *tgbotapi.CallbackQuery) error
 }

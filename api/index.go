@@ -13,27 +13,45 @@ type rootHandler struct {
 	db       *gorm.DB
 }
 
-func (h *rootHandler) HandleMessages(update tgbotapi.Update) error {
-	message := update.Message
+func (h *rootHandler) HandleMessages(update tgbotapi.Update, updateType shared.UpdateType) error {
+	var message *tgbotapi.Message
+	var callbackQuery *tgbotapi.CallbackQuery
+	if updateType == shared.Message {
+		message = update.Message
+
+	} else if updateType == shared.Callback {
+		message = update.CallbackQuery.Message
+		callbackQuery = update.CallbackQuery
+	} else {
+		return nil
+	}
+
 	user, userErr := checkIfUserExists(message.From, h.db)
 	if userErr != nil {
 		return userErr
 	}
 
 	var err error
+	if callbackQuery != nil {
+		err = h.HandleCallback(user, callbackQuery)
+		return err
+	}
+
 	if message.IsCommand() {
-		command := update.Message.Command()
+		command := shared.CommandType(update.Message.Command())
 		switch command {
-		case "start":
+		case shared.StartCommand:
 			err = h.HandleStartCommand(user, message)
-		case "help":
+		case shared.HelpCommand:
 			err = h.HandleHelpCommand(user, message)
 		}
+		return err
 	}
 
 	if message.Photo != nil || (message.Document != nil && strings.Contains(message.Document.MimeType, "image/")) {
-		err = h.HandlePhotoCommand(user, message)
+		err = h.HandlePhoto(user, message)
 	}
+
 	return err
 }
 

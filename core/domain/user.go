@@ -14,6 +14,7 @@ const (
 
 type User struct {
 	gorm.Model
+	ID           int64  `gorm:"primary_key;autoIncrement"`
 	TelegramID   int64  `gorm:"primaryKey;unique"`
 	IsBot        bool   `gorm:"not null"`
 	FirstName    string `gorm:"not null"`

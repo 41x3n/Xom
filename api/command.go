@@ -29,7 +29,7 @@ func (h *rootHandler) HandleHelpCommand(user *domain.User, message *tgbotapi.Mes
 	return err
 }
 
-func (h *rootHandler) HandlePhotoCommand(user *domain.User, message *tgbotapi.Message) error {
+func (h *rootHandler) HandlePhoto(user *domain.User, message *tgbotapi.Message) error {
 	telegramAPI := h.telegram.GetAPI()
 	contextTimeout := time.Duration(h.env.ContextTimeout) * time.Second
 
@@ -37,8 +37,22 @@ func (h *rootHandler) HandlePhotoCommand(user *domain.User, message *tgbotapi.Me
 	pu := usecase.NewPhotoUsecase(pr, contextTimeout)
 	pc := controller.NewPhotoController(pu, telegramAPI)
 
-	err := pc.HandlePhotoCommand(user, message)
+	err := pc.HandlePhoto(user, message)
 
 	return err
 
+}
+
+func (h *rootHandler) HandleCallback(user *domain.User, callback *tgbotapi.CallbackQuery) error {
+	telegramAPI := h.telegram.GetAPI()
+	contextTimeout := time.Duration(h.env.ContextTimeout) * time.Second
+
+	pr := repository.NewPhotoRepository(h.db, domain.TablePhoto)
+	cu := usecase.NewCallbackUseCase(pr, contextTimeout)
+
+	cc := controller.NewCallbackController(cu, telegramAPI)
+
+	err := cc.HandleCallback(callback)
+
+	return err
 }
