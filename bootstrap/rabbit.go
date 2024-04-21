@@ -32,11 +32,12 @@ func CloseRabbitMQChannel(ch *amqp.Channel) {
 	ch.Close()
 }
 
-func NewRabbitMQ(env *shared.Env) shared.RabbitMQService {
+func NewRabbitMQ(env *shared.Env, ffmpegHandler shared.FFMPEGService) shared.
+	RabbitMQService {
 	conn := CreateRabbitMQConnection(env)
 	ch := CreateChannel(conn)
 
-	rabbitMQ, err := service.NewRabbitMQService(conn, ch, env)
+	rabbitMQ, err := service.NewRabbitMQService(conn, ch, env, ffmpegHandler)
 
 	shared.FailOnError(err, "Failed to create RabbitMQ service")
 

@@ -18,9 +18,10 @@ var (
 const FileQueue = "file_queue"
 
 type rabbitMQ struct {
-	Conn *amqp.Connection
-	Ch   *amqp.Channel
-	env  *shared.Env
+	Conn          *amqp.Connection
+	Ch            *amqp.Channel
+	env           *shared.Env
+	FfmpegHandler shared.FFMPEGService
 }
 
 func (r *rabbitMQ) GetChannel() *amqp.Channel {
@@ -119,30 +120,46 @@ func (r *rabbitMQ) ConsumeMessages() {
 
 	sem := make(chan struct{}, 10) // Create a semaphore channel with a capacity of 10
 
-	go func() {
-		for d := range msgs {
-			sem <- struct{}{} // Send to the semaphore channel
-			go func(delivery amqp.Delivery) {
-				log.Printf("Received a message: %s", delivery.Body)
-				// Add error handling for message processing
-				//err := processor.ProcessImage(delivery)
-				//if err != nil {
-				//	log.Printf("Failed to process image: %s", err)
-				//	// Add error handling logic here
-				//}
-				<-sem // Receive from the semaphore channel
-			}(d)
-		}
-	}()
-
 	log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
+
+	for d := range msgs {
+		log.Printf("Received a message: %s", d.Body)
+		go r.processMessage(d, sem)
+	}
 }
 
-func NewRabbitMQService(conn *amqp.Connection, ch *amqp.Channel, env *shared.Env) (shared.RabbitMQService,
+func (r *rabbitMQ) processMessage(delivery amqp.Delivery, semaphore chan struct{}) {
+	semaphore <- struct{}{} // Send to the semaphore channel
+
+	payload := &shared.RabbitMQPayload{}
+	if errMarshal := json.Unmarshal(delivery.Body, payload); errMarshal != nil {
+		log.Printf("Error decoding JSON: %v", errMarshal)
+		return
+	}
+
+	if err := r.FfmpegHandler.HandleFiles(payload); err != nil {
+		log.Printf("Error handling command: %v", err)
+		r.ackMessage(delivery, false)
+		return
+	}
+
+	r.ackMessage(delivery, true)
+	<-semaphore
+}
+
+func (r *rabbitMQ) ackMessage(delivery amqp.Delivery, ackType bool) {
+	if err := delivery.Ack(ackType); err != nil {
+		log.Printf("Error acknowledging message: %v", err)
+	}
+}
+
+func NewRabbitMQService(conn *amqp.Connection, ch *amqp.Channel,
+	env *shared.Env, ffmpegHandler shared.FFMPEGService) (shared.RabbitMQService,
 	error) {
 	return &rabbitMQ{
-		Conn: conn,
-		Ch:   ch,
-		env:  env,
+		Conn:          conn,
+		Ch:            ch,
+		env:           env,
+		FfmpegHandler: ffmpegHandler,
 	}, nil
 }

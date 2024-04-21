@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"runtime"
+	"strings"
 )
 
 // CloseResponseBody closes the response body and handles any error
@@ -18,4 +20,12 @@ func FailOnError(err error, msg string) {
 	if err != nil {
 		log.Panicf("%s: %s", msg, err)
 	}
+}
+
+// util function to printout goroutine id
+func GetGoroutineID() {
+	var buf [64]byte
+	n := runtime.Stack(buf[:], false)
+	idField := strings.Fields(strings.TrimPrefix(string(buf[:n]), "goroutine "))[0]
+	fmt.Println("GOROUTINE ID: ", idField)
 }

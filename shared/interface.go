@@ -27,6 +27,10 @@ type RabbitMQService interface {
 	ConsumeMessages()
 }
 
+type FFMPEGService interface {
+	HandleFiles(payload *RabbitMQPayload) error
+}
+
 type RootHandlerInterface interface {
 	HandleMessages(update tgbotapi.Update, updateType UpdateType) error
 	HandleStartCommand(user *domain.User, message *tgbotapi.Message) error
