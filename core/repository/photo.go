@@ -44,6 +44,6 @@ func (pr *photoRepository) GetByID(ctx context.Context,
 }
 
 func (pr *photoRepository) UpdateStatus(ctx context.Context, photo *domain.Photo) error {
-	result := pr.database.Save(photo)
+	result := pr.database.Model(photo).Updates(photo)
 	return result.Error
 }

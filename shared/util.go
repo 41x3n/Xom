@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"os"
 	"runtime"
 	"strings"
 )
@@ -13,6 +14,13 @@ func CloseResponseBody(body io.ReadCloser) {
 	err := body.Close()
 	if err != nil {
 		fmt.Println(err)
+	}
+}
+
+func CloseFile(file *os.File) {
+	err := file.Close()
+	if err != nil {
+		log.Printf("Error while closing the file: %v", err)
 	}
 }
 

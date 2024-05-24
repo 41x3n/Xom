@@ -21,7 +21,7 @@ func NewCallbackController(cu domain.CallbackUseCase,
 }
 
 func (cc *CallbackController) HandleCallback(callback *tgbotapi.CallbackQuery) error {
-	photoId, command, err := cc.cu.GetFileIDAndCommand(callback)
+	photoId, command, convertTo, err := cc.cu.GetFileIDAndCommand(callback)
 	if err != nil {
 		return err
 	}
@@ -32,17 +32,27 @@ func (cc *CallbackController) HandleCallback(callback *tgbotapi.CallbackQuery) e
 			return err
 		}
 
+		if photo.Status == domain.Processing {
+			msg := tgbotapi.NewMessage(callback.Message.Chat.ID,
+				"Your photo is already being processed")
+			if _, err = cc.TelegramAPI.Send(msg); err != nil {
+				return err
+			}
+			return nil
+		}
+
 		payload := shared.RabbitMQPayload{
 			Command: shared.PhotoCommand,
 			ID:      photo.ID,
 		}
 
-		if err = cc.RabbitMQ.PublishMessage(payload); err != nil {
+		photo.Status = domain.Preparing
+		photo.ConvertTo = convertTo
+		if err = cc.cu.MarkPhotoAsPreparing(photo); err != nil {
 			return err
 		}
 
-		photo.Status = domain.Processing
-		if err = cc.cu.MarkPhotoAsProcessing(photo); err != nil {
+		if err = cc.RabbitMQ.PublishMessage(payload); err != nil {
 			return err
 		}
 

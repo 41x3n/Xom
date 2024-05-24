@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"github.com/41x3n/Xom/core/domain"
+	"github.com/41x3n/Xom/shared"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"strconv"
 	"strings"
@@ -21,19 +22,20 @@ func NewCallbackUseCase(pr domain.PhotoRepository, timeout time.Duration) domain
 	}
 }
 
-func (cu *CallbackUseCase) GetFileIDAndCommand(callback *tgbotapi.CallbackQuery) (string, string, error) {
+func (cu *CallbackUseCase) GetFileIDAndCommand(callback *tgbotapi.
+	CallbackQuery) (string, string, string, error) {
 	data := callback.Data
 	if data == "" {
-		return "", "", domain.ErrInvalidCallbackData
+		return "", "", "", shared.ErrInvalidCallbackData
 	}
 
 	dataParts := strings.Split(data, "-")
-	if len(dataParts) < 2 {
-		return "", "", domain.ErrInvalidCallbackData
+	if len(dataParts) < 3 {
+		return "", "", "", shared.ErrInvalidCallbackData
 
 	}
 
-	return dataParts[0], dataParts[1], nil
+	return dataParts[0], dataParts[1], dataParts[2], nil
 }
 
 func (cu *CallbackUseCase) GetPhotoByID(photoId string) (*domain.Photo, error) {
@@ -51,11 +53,11 @@ func (cu *CallbackUseCase) GetPhotoByID(photoId string) (*domain.Photo, error) {
 	return photo, err
 }
 
-func (cu *CallbackUseCase) MarkPhotoAsProcessing(photo *domain.Photo) error {
+func (cu *CallbackUseCase) MarkPhotoAsPreparing(photo *domain.Photo) error {
 	ctx, cancel := context.WithTimeout(context.Background(), cu.contextTimeout)
 	defer cancel()
 
-	photo.Status = domain.Processing
+	photo.Status = domain.Preparing
 	err := cu.photoRepo.UpdateStatus(ctx, photo)
 
 	if err != nil {

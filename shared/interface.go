@@ -29,6 +29,13 @@ type RabbitMQService interface {
 
 type FFMPEGService interface {
 	HandleFiles(payload *RabbitMQPayload) error
+	HandlePhotos(ID int64) error
+	ConvertPhoto(inputPath, outputPath string) error
+	ConvertImageToPDF(inputPath, outputPath string) error
+	SendFileToUser(photo *domain.Photo, outputPath,
+		message string) error
+	GetInputOutputFilePaths(photo *domain.Photo) (string, string, error)
+	IsValidFormat(format string) bool
 }
 
 type RootHandlerInterface interface {

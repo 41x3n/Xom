@@ -42,7 +42,7 @@ func (pu *photoUsecase) GetFileIDAndType(message *tgbotapi.Message) (string, str
 	}
 
 	if fileID == "" || fileType == "" {
-		return "", "", domain.ErrInvalidFile
+		return "", "", shared.ErrInvalidFile
 	}
 
 	return fileID, fileType, nil
@@ -80,7 +80,7 @@ func (pu *photoUsecase) GenerateConvertOptions(
 	for i, fileType := range domain.FileTypeArray {
 		if fileType != ignoredBtn {
 			btnLabel := strings.ToUpper(fileType)
-			data := fmt.Sprintf("%d-%s", photoID, shared.PhotoCommand)
+			data := fmt.Sprintf("%d-%s-%s", photoID, shared.PhotoCommand, fileType)
 			button := tgbotapi.NewInlineKeyboardButtonData(btnLabel, data)
 			row = append(row, button)
 		}
@@ -114,4 +114,39 @@ func (pu *photoUsecase) GenerateMessage(fileType string, message *tgbotapi.Messa
 	msg.ReplyMarkup = keyboard
 
 	return msg
+}
+
+func (pu *photoUsecase) ValidateIfPhotoReadyToBeConverted(ID int64) (*domain.Photo,
+	error) {
+	ctx, cancel := context.WithTimeout(context.Background(), pu.contextTimeout)
+	defer cancel()
+
+	photo, err := pu.photoRepo.GetByID(ctx, ID)
+	if err != nil {
+		return nil, err
+	}
+
+	if photo.FileType == "" || photo.ConvertTo == "" {
+		return nil, shared.ErrInvalidFile
+	}
+
+	if photo.Status != domain.Preparing {
+		return nil, shared.HandleFileStateError(photo.Status)
+	}
+
+	return photo, nil
+}
+
+func (pu *photoUsecase) UpdatePhotoStatus(photo *domain.Photo, status domain.Status) error {
+	ctx, cancel := context.WithTimeout(context.Background(), pu.contextTimeout)
+	defer cancel()
+
+	photo.Status = status
+	err := pu.photoRepo.UpdateStatus(ctx, photo)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -19,3 +19,6 @@ type RabbitMQPayload struct {
 	Command CommandType `json:"command"`
 	ID      int64       `json:"id"`
 }
+
+const DownloadFolder = "./downloads"
+const ConvertedFolder = "./converted"
