@@ -24,7 +24,9 @@ func (pc *PhotoController) HandlePhoto(user *domain.User, message *tgbotapi.Mess
 		return err
 	}
 
-	photo, err = pc.pu.SavePhotoId(user, fileID, fileType)
+	var messageID = message.MessageID
+
+	photo, err = pc.pu.SavePhotoId(user, fileID, fileType, messageID)
 	if err != nil {
 		return err
 	}

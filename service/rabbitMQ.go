@@ -4,10 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/41x3n/Xom/shared"
-	amqp "github.com/rabbitmq/amqp091-go"
 	"log"
 	"time"
+
+	"github.com/41x3n/Xom/shared"
+	amqp "github.com/rabbitmq/amqp091-go"
 )
 
 var (

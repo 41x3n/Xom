@@ -1,16 +1,18 @@
 package service
 
 import (
+	"log"
+	"os"
+	"time"
+
 	"github.com/41x3n/Xom/core/domain"
 	"github.com/41x3n/Xom/core/repository"
 	"github.com/41x3n/Xom/core/usecase"
 	"github.com/41x3n/Xom/shared"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"github.com/hashicorp/go-multierror"
 	pdfcpuAPI "github.com/pdfcpu/pdfcpu/pkg/api"
 	ffmpeg "github.com/u2takey/ffmpeg-go"
-	"log"
-	"os"
-	"time"
 )
 
 func (c *converter) HandlePhotos(ID int64) error {
@@ -49,7 +51,24 @@ func (c *converter) HandlePhotos(ID int64) error {
 		errConvert = c.ConvertPhoto(inputPath, outputPath)
 	}
 	if errConvert != nil {
-		return errConvert
+		var result *multierror.Error
+
+		errUpdateStatus := pu.UpdatePhotoStatus(photo, domain.Failed)
+		if errUpdateStatus != nil {
+			result = multierror.Append(result, errUpdateStatus)
+		}
+
+		errInformUser := c.InformUserAboutError(photo.UserTelegramID,
+			photo.MessageID,
+			"Sorry, "+shared.ErrFailedToConvert.Error())
+		if errInformUser != nil {
+			result = multierror.Append(result, errInformUser)
+		}
+
+		// Append errConvert to the result
+		result = multierror.Append(result, errConvert)
+
+		return result.ErrorOrNil()
 	}
 
 	errorSendPhoto := c.SendFileToUser(photo, outputPath,
@@ -110,9 +129,25 @@ func (c *converter) SendFileToUser(photo *domain.Photo, outputPath, message stri
 		Reader: file,
 	}
 	documentToBeSent := tgbotapi.NewDocument(userTelegramID, reader)
+	documentToBeSent.Caption = message
+	documentToBeSent.ReplyToMessageID = int(photo.MessageID)
 
 	// Send the document
 	_, err := telegramAPI.Send(documentToBeSent)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (c *converter) InformUserAboutError(userTelegramID, messageID int64,
+	errorText string) error {
+	telegramAPI := c.telegram.GetAPI()
+
+	msg := tgbotapi.NewMessage(userTelegramID, errorText)
+	msg.ReplyToMessageID = int(messageID)
+	_, err := telegramAPI.Send(msg)
 	if err != nil {
 		return err
 	}

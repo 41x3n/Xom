@@ -2,6 +2,7 @@ package controller
 
 import (
 	"fmt"
+
 	"github.com/41x3n/Xom/core/domain"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
@@ -17,7 +18,9 @@ func NewStartController(telegramAPI *tgbotapi.BotAPI) *StartController {
 func (sc *StartController) HandleStartCommand(user *domain.User, message *tgbotapi.Message) error {
 	var msgText string
 	if user.UserName != nil {
-		msgText = fmt.Sprintf("Howdy, %s! Welcome aboard the Xom express, your personal assistant for all your file conversion needs. Buckle up and enjoy the ride!", *user.UserName)
+		msgText = fmt.Sprintf("Howdy, %s! Welcome aboard the Xom express, "+
+			"your personal assistant for all your file conversion needs. "+
+			"Buckle up, send any file and enjoy the ride!", *user.UserName)
 	} else {
 		msgText = "Hello! Welcome to Xom, your butler to handle all your file conversion help."
 	}

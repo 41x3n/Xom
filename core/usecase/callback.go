@@ -2,12 +2,13 @@ package usecase
 
 import (
 	"context"
-	"github.com/41x3n/Xom/core/domain"
-	"github.com/41x3n/Xom/shared"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/41x3n/Xom/core/domain"
+	"github.com/41x3n/Xom/shared"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 type CallbackUseCase struct {

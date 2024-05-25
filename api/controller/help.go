@@ -18,6 +18,7 @@ func (hc *HelpController) HandleHelpCommand(user *domain.User, message *tgbotapi
 	msgText += "/start - Start the bot\n"
 	msgText += "/help - Get help\n"
 	msgText += "/about - About Xom\n"
+	msgText += "Or simply send a file to get started!"
 	msg := tgbotapi.NewMessage(message.Chat.ID, msgText)
 	_, err := hc.TelegramAPI.Send(msg)
 	return err

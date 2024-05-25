@@ -2,6 +2,7 @@ package domain
 
 import (
 	"context"
+
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"gorm.io/gorm"
 )
@@ -23,6 +24,11 @@ var FileTypeArray = []string{
 	"gif",
 	"pdf",
 	"webp",
+	"bmp",
+	"tif",
+	"tiff",
+	"ico",
+	"avif",
 }
 
 type Photo struct {
@@ -33,6 +39,7 @@ type Photo struct {
 	FileType       string `gorm:"not null"`
 	Status         Status `gorm:"not null;default:initiated;check:status IN ('initiated', 'preparing', 'processing', 'completed', 'failed')"`
 	ConvertTo      string `gorm:"not null;default:jpg"`
+	MessageID      int64  `gorm:"default:null"`
 }
 
 type PhotoRepository interface {
@@ -45,7 +52,9 @@ type PhotoRepository interface {
 
 type PhotoUseCase interface {
 	GetFileIDAndType(*tgbotapi.Message) (string, string, error)
-	SavePhotoId(user *User, fileID, fileType string) (*Photo, error)
+	SavePhotoId(user *User, fileID, fileType string,
+		messageID int) (*Photo,
+		error)
 	GenerateConvertOptions(fileType string, photoID int64) [][]tgbotapi.InlineKeyboardButton
 	GenerateKeyboardMarkup(buttonRows [][]tgbotapi.InlineKeyboardButton) tgbotapi.InlineKeyboardMarkup
 	GenerateMessage(fileType string, message *tgbotapi.Message, keyboard tgbotapi.InlineKeyboardMarkup) tgbotapi.MessageConfig

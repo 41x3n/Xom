@@ -34,7 +34,8 @@ func (cc *CallbackController) HandleCallback(callback *tgbotapi.CallbackQuery) e
 
 		if photo.Status == domain.Processing {
 			msg := tgbotapi.NewMessage(callback.Message.Chat.ID,
-				"Your photo is already being processed")
+				"Hey, your photo is still being processed. Please wait a bit longer.")
+			msg.ReplyToMessageID = int(photo.MessageID)
 			if _, err = cc.TelegramAPI.Send(msg); err != nil {
 				return err
 			}
@@ -56,7 +57,9 @@ func (cc *CallbackController) HandleCallback(callback *tgbotapi.CallbackQuery) e
 			return err
 		}
 
-		msg := tgbotapi.NewMessage(callback.Message.Chat.ID, "Your photo is being processed")
+		msg := tgbotapi.NewMessage(callback.Message.Chat.ID, "Hold on, "+
+			"your photo is being processed...")
+		msg.ReplyToMessageID = int(photo.MessageID)
 		if _, err = cc.TelegramAPI.Send(msg); err != nil {
 			return err
 		}

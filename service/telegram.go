@@ -1,10 +1,11 @@
 package service
 
 import (
+	"log"
+
 	"github.com/41x3n/Xom/shared"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/pkg/errors"
-	"log"
 )
 
 type telegram struct {

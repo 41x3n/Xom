@@ -1,9 +1,10 @@
 package bootstrap
 
 import (
+	"log"
+
 	"github.com/41x3n/Xom/service"
 	"github.com/41x3n/Xom/shared"
-	"log"
 
 	amqp "github.com/rabbitmq/amqp091-go"
 )

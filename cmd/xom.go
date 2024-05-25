@@ -1,9 +1,10 @@
 package main
 
 import (
-	"github.com/41x3n/Xom/bootstrap"
 	"log"
 	"os"
+
+	"github.com/41x3n/Xom/bootstrap"
 )
 
 func main() {

@@ -1,12 +1,13 @@
 package api
 
 import (
+	"time"
+
 	"github.com/41x3n/Xom/core/domain"
 	"github.com/41x3n/Xom/core/repository"
 	"github.com/41x3n/Xom/core/usecase"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"gorm.io/gorm"
-	"time"
 )
 
 func checkIfUserExists(tgUser *tgbotapi.User, db *gorm.DB) (*domain.User,

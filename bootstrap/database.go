@@ -1,9 +1,10 @@
 package bootstrap
 
 import (
+	"log"
+
 	"github.com/41x3n/Xom/core/domain"
 	"github.com/41x3n/Xom/shared"
-	"log"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"

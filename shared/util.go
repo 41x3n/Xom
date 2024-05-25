@@ -30,7 +30,7 @@ func FailOnError(err error, msg string) {
 	}
 }
 
-// util function to printout goroutine id
+// GetGoroutineID util function to printout goroutine id
 func GetGoroutineID() {
 	var buf [64]byte
 	n := runtime.Stack(buf[:], false)

@@ -2,15 +2,16 @@ package service
 
 import (
 	"fmt"
-	"github.com/41x3n/Xom/core/domain"
-	"github.com/41x3n/Xom/shared"
-	"gorm.io/gorm"
 	"io"
 	"log"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strconv"
+
+	"github.com/41x3n/Xom/core/domain"
+	"github.com/41x3n/Xom/shared"
+	"gorm.io/gorm"
 )
 
 type converter struct {

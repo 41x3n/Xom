@@ -3,11 +3,12 @@ package usecase
 import (
 	"context"
 	"fmt"
+	"strings"
+	"time"
+
 	"github.com/41x3n/Xom/core/domain"
 	"github.com/41x3n/Xom/shared"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"strings"
-	"time"
 )
 
 type photoUsecase struct {
@@ -49,7 +50,7 @@ func (pu *photoUsecase) GetFileIDAndType(message *tgbotapi.Message) (string, str
 }
 
 func (pu *photoUsecase) SavePhotoId(user *domain.User, fileID,
-	fileType string) (*domain.Photo, error) {
+	fileType string, messageID int) (*domain.Photo, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), pu.contextTimeout)
 	defer cancel()
 
@@ -58,6 +59,7 @@ func (pu *photoUsecase) SavePhotoId(user *domain.User, fileID,
 		FileID:         fileID,
 		FileType:       fileType,
 		Status:         domain.Initiated,
+		MessageID:      int64(messageID),
 	}
 
 	err := pu.photoRepo.Create(ctx, photoStruct)

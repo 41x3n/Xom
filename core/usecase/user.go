@@ -3,9 +3,10 @@ package usecase
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/41x3n/Xom/core/domain"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"time"
 )
 
 type userUsecase struct {

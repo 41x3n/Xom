@@ -36,6 +36,8 @@ type FFMPEGService interface {
 		message string) error
 	GetInputOutputFilePaths(photo *domain.Photo) (string, string, error)
 	IsValidFormat(format string) bool
+	InformUserAboutError(userTelegramID, messageID int64,
+		errorText string) error
 }
 
 type RootHandlerInterface interface {

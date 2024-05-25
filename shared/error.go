@@ -3,6 +3,7 @@ package shared
 import (
 	"errors"
 	"fmt"
+
 	"github.com/41x3n/Xom/core/domain"
 )
 
@@ -13,6 +14,8 @@ var ErrFileIsAlreadyProcessing = errors.New("file is already processing")
 var ErrFileAlreadyProcessed = errors.New("file already processed")
 var ErrFileFailed = errors.New("file processing failed")
 var ErrFileFormatInvalid = errors.New("file format is invalid")
+var ErrFailedToConvert = errors.New("failed to convert file, " +
+	"please try again later")
 
 var StatusToError = map[domain.Status]error{
 	domain.Processing: ErrFileIsAlreadyProcessing,

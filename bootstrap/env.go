@@ -1,8 +1,9 @@
 package bootstrap
 
 import (
-	"github.com/41x3n/Xom/shared"
 	"log"
+
+	"github.com/41x3n/Xom/shared"
 
 	"github.com/spf13/viper"
 )
