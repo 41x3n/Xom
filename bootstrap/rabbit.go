@@ -3,13 +3,14 @@ package bootstrap
 import (
 	"log"
 
+	interfaces "github.com/41x3n/Xom/interface"
 	"github.com/41x3n/Xom/service"
 	"github.com/41x3n/Xom/shared"
 
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
-func CreateRabbitMQConnection(env *shared.Env) *amqp.Connection {
+func CreateRabbitMQConnection(env *interfaces.Env) *amqp.Connection {
 	url := env.RabbitMQURL
 
 	conn, err := amqp.Dial(url)
@@ -33,7 +34,7 @@ func CloseRabbitMQChannel(ch *amqp.Channel) {
 	ch.Close()
 }
 
-func NewRabbitMQ(env *shared.Env, ffmpegHandler shared.FFMPEGService) shared.
+func NewRabbitMQ(env *interfaces.Env, ffmpegHandler interfaces.FFMPEGService) interfaces.
 	RabbitMQService {
 	conn := CreateRabbitMQConnection(env)
 	ch := CreateChannel(conn)

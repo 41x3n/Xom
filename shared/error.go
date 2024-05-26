@@ -3,8 +3,6 @@ package shared
 import (
 	"errors"
 	"fmt"
-
-	"github.com/41x3n/Xom/core/domain"
 )
 
 var ErrInvalidFile = errors.New("invalid file")
@@ -17,13 +15,13 @@ var ErrFileFormatInvalid = errors.New("file format is invalid")
 var ErrFailedToConvert = errors.New("failed to convert file, " +
 	"please try again later")
 
-var StatusToError = map[domain.Status]error{
-	domain.Processing: ErrFileIsAlreadyProcessing,
-	domain.Completed:  ErrFileAlreadyProcessed,
-	domain.Failed:     ErrFileFailed,
+var StatusToError = map[Status]error{
+	Processing: ErrFileIsAlreadyProcessing,
+	Completed:  ErrFileAlreadyProcessed,
+	Failed:     ErrFileFailed,
 }
 
-func HandleFileStateError(status domain.Status) error {
+func HandleFileStateError(status Status) error {
 	if err, ok := StatusToError[status]; ok {
 		return err
 	}

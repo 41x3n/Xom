@@ -3,12 +3,11 @@ package bootstrap
 import (
 	"log"
 
-	"github.com/41x3n/Xom/shared"
-
+	interfaces "github.com/41x3n/Xom/interface"
 	"github.com/41x3n/Xom/service"
 )
 
-func GetTelegram(env *shared.Env) shared.TelegramService {
+func GetTelegram(env *interfaces.Env) interfaces.TelegramService {
 	token := env.TelegramBotToken
 	canDebug := env.AppEnv == "development"
 

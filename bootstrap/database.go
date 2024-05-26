@@ -4,13 +4,14 @@ import (
 	"log"
 
 	"github.com/41x3n/Xom/core/domain"
+	interfaces "github.com/41x3n/Xom/interface"
 	"github.com/41x3n/Xom/shared"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-func NewPostgresDatabase(env *shared.Env) *gorm.DB {
+func NewPostgresDatabase(env *interfaces.Env) *gorm.DB {
 	dsn := env.DSN
 
 	client, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})

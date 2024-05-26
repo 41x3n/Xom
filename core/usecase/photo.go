@@ -58,7 +58,7 @@ func (pu *photoUsecase) SavePhotoId(user *domain.User, fileID,
 		UserTelegramID: user.TelegramID,
 		FileID:         fileID,
 		FileType:       fileType,
-		Status:         domain.Initiated,
+		Status:         shared.Initiated,
 		MessageID:      int64(messageID),
 	}
 
@@ -132,14 +132,14 @@ func (pu *photoUsecase) ValidateIfPhotoReadyToBeConverted(ID int64) (*domain.Pho
 		return nil, shared.ErrInvalidFile
 	}
 
-	if photo.Status != domain.Preparing {
+	if photo.Status != shared.Preparing {
 		return nil, shared.HandleFileStateError(photo.Status)
 	}
 
 	return photo, nil
 }
 
-func (pu *photoUsecase) UpdatePhotoStatus(photo *domain.Photo, status domain.Status) error {
+func (pu *photoUsecase) UpdatePhotoStatus(photo *domain.Photo, status shared.Status) error {
 	ctx, cancel := context.WithTimeout(context.Background(), pu.contextTimeout)
 	defer cancel()
 

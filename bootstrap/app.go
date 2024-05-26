@@ -2,18 +2,18 @@ package bootstrap
 
 import (
 	"github.com/41x3n/Xom/api"
+	interfaces "github.com/41x3n/Xom/interface"
 	service "github.com/41x3n/Xom/service/ffmpeg"
-	"github.com/41x3n/Xom/shared"
 	"gorm.io/gorm"
 )
 
 type Application struct {
-	Env           *shared.Env
-	Telegram      shared.TelegramService
-	RootHandler   shared.RootHandlerInterface
+	Env           *interfaces.Env
+	Telegram      interfaces.TelegramService
+	RootHandler   interfaces.RootHandlerInterface
 	Postgres      *gorm.DB
-	RabbitMQ      shared.RabbitMQService
-	FfmpegHandler shared.FFMPEGService
+	RabbitMQ      interfaces.RabbitMQService
+	FfmpegHandler interfaces.FFMPEGService
 }
 
 type ApplicationInterface interface {

@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/41x3n/Xom/api/controller"
@@ -42,6 +43,22 @@ func (h *rootHandler) HandlePhoto(user *domain.User, message *tgbotapi.Message) 
 
 	return err
 
+}
+
+func (h *rootHandler) HandleAudio(user *domain.User, message *tgbotapi.Message) error {
+	fmt.Println("=====================")
+	fmt.Println(message.Audio, message.Voice)
+	fmt.Println("=====================")
+	// telegramAPI := h.telegram.GetAPI()
+	// contextTimeout := time.Duration(h.env.ContextTimeout) * time.Second
+
+	// ar := repository.NewAudioRepository(h.db, domain.TableAudio)
+	// au := usecase.NewAudioUsecase(ar, contextTimeout)
+	// ac := controller.NewAudioController(au, telegramAPI)
+	//
+	// err := ac.HandleAudio(user, message)
+
+	return nil
 }
 
 func (h *rootHandler) HandleCallback(user *domain.User, callback *tgbotapi.CallbackQuery) error {

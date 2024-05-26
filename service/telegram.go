@@ -3,6 +3,7 @@ package service
 import (
 	"log"
 
+	interfaces "github.com/41x3n/Xom/interface"
 	"github.com/41x3n/Xom/shared"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/pkg/errors"
@@ -12,7 +13,7 @@ type telegram struct {
 	API *tgbotapi.BotAPI
 }
 
-func (t *telegram) PollForUpdates(rootHandler shared.RootHandlerInterface) {
+func (t *telegram) PollForUpdates(rootHandler interfaces.RootHandlerInterface) {
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 60
 
@@ -38,7 +39,7 @@ func (t *telegram) GetAPI() *tgbotapi.BotAPI {
 	return t.API
 }
 
-func NewTelegramService(token string, canDebug bool) (shared.TelegramService, error) {
+func NewTelegramService(token string, canDebug bool) (interfaces.TelegramService, error) {
 	botAPI, err := tgbotapi.NewBotAPI(token)
 	if err != nil {
 		return nil, err

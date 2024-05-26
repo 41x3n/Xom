@@ -33,7 +33,7 @@ func (c *converter) HandlePhotos(ID int64) error {
 		return shared.ErrFileFormatInvalid
 	}
 
-	if pu.UpdatePhotoStatus(photo, domain.Processing) != nil {
+	if pu.UpdatePhotoStatus(photo, shared.Processing) != nil {
 		return shared.ErrUpdateStatus
 	}
 
@@ -53,7 +53,7 @@ func (c *converter) HandlePhotos(ID int64) error {
 	if errConvert != nil {
 		var result *multierror.Error
 
-		errUpdateStatus := pu.UpdatePhotoStatus(photo, domain.Failed)
+		errUpdateStatus := pu.UpdatePhotoStatus(photo, shared.Failed)
 		if errUpdateStatus != nil {
 			result = multierror.Append(result, errUpdateStatus)
 		}
@@ -77,7 +77,7 @@ func (c *converter) HandlePhotos(ID int64) error {
 		return errorSendPhoto
 	}
 
-	if pu.UpdatePhotoStatus(photo, domain.Completed) != nil {
+	if pu.UpdatePhotoStatus(photo, shared.Completed) != nil {
 		return shared.ErrUpdateStatus
 	}
 

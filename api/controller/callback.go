@@ -2,6 +2,7 @@ package controller
 
 import (
 	"github.com/41x3n/Xom/core/domain"
+	interfaces "github.com/41x3n/Xom/interface"
 	"github.com/41x3n/Xom/shared"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
@@ -9,11 +10,11 @@ import (
 type CallbackController struct {
 	cu          domain.CallbackUseCase
 	TelegramAPI *tgbotapi.BotAPI
-	RabbitMQ    shared.RabbitMQService
+	RabbitMQ    interfaces.RabbitMQService
 }
 
 func NewCallbackController(cu domain.CallbackUseCase,
-	telegramAPI *tgbotapi.BotAPI, rabbitMQ shared.RabbitMQService) *CallbackController {
+	telegramAPI *tgbotapi.BotAPI, rabbitMQ interfaces.RabbitMQService) *CallbackController {
 	return &CallbackController{
 		cu:          cu,
 		TelegramAPI: telegramAPI,
@@ -32,7 +33,7 @@ func (cc *CallbackController) HandleCallback(callback *tgbotapi.CallbackQuery) e
 			return err
 		}
 
-		if photo.Status == domain.Processing {
+		if photo.Status == shared.Processing {
 			msg := tgbotapi.NewMessage(callback.Message.Chat.ID,
 				"Hey, your photo is still being processed. Please wait a bit longer.")
 			msg.ReplyToMessageID = int(photo.MessageID)
@@ -47,7 +48,7 @@ func (cc *CallbackController) HandleCallback(callback *tgbotapi.CallbackQuery) e
 			ID:      photo.ID,
 		}
 
-		photo.Status = domain.Preparing
+		photo.Status = shared.Preparing
 		photo.ConvertTo = convertTo
 		if err = cc.cu.MarkPhotoAsPreparing(photo); err != nil {
 			return err

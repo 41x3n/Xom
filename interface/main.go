@@ -1,7 +1,8 @@
-package shared
+package interfaces
 
 import (
 	"github.com/41x3n/Xom/core/domain"
+	"github.com/41x3n/Xom/shared"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
@@ -23,12 +24,12 @@ type RabbitMQService interface {
 	GetChannel() *amqp.Channel
 	GetConnection() *amqp.Connection
 	GetQueue() (*amqp.Queue, error)
-	PublishMessage(payload RabbitMQPayload) error
+	PublishMessage(payload shared.RabbitMQPayload) error
 	ConsumeMessages()
 }
 
 type FFMPEGService interface {
-	HandleFiles(payload *RabbitMQPayload) error
+	HandleFiles(payload *shared.RabbitMQPayload) error
 	HandlePhotos(ID int64) error
 	ConvertPhoto(inputPath, outputPath string) error
 	ConvertImageToPDF(inputPath, outputPath string) error
@@ -41,9 +42,10 @@ type FFMPEGService interface {
 }
 
 type RootHandlerInterface interface {
-	HandleMessages(update tgbotapi.Update, updateType UpdateType) error
+	HandleMessages(update tgbotapi.Update, updateType shared.UpdateType) error
 	HandleStartCommand(user *domain.User, message *tgbotapi.Message) error
 	HandleHelpCommand(user *domain.User, message *tgbotapi.Message) error
 	HandlePhoto(user *domain.User, message *tgbotapi.Message) error
+	HandleAudio(user *domain.User, message *tgbotapi.Message) error
 	HandleCallback(user *domain.User, callback *tgbotapi.CallbackQuery) error
 }

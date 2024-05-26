@@ -3,13 +3,12 @@ package bootstrap
 import (
 	"log"
 
-	"github.com/41x3n/Xom/shared"
-
+	interfaces "github.com/41x3n/Xom/interface"
 	"github.com/spf13/viper"
 )
 
-func NewEnv() *shared.Env {
-	env := shared.Env{}
+func NewEnv() *interfaces.Env {
+	env := interfaces.Env{}
 	viper.SetConfigFile(".env")
 
 	err := viper.ReadInConfig()

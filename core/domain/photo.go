@@ -3,18 +3,9 @@ package domain
 import (
 	"context"
 
+	"github.com/41x3n/Xom/shared"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"gorm.io/gorm"
-)
-
-type Status string
-
-const (
-	Initiated  Status = "initiated"
-	Preparing  Status = "preparing"
-	Processing Status = "processing"
-	Completed  Status = "completed"
-	Failed     Status = "failed"
 )
 
 var FileTypeArray = []string{
@@ -33,13 +24,15 @@ var FileTypeArray = []string{
 
 type Photo struct {
 	gorm.Model
-	ID             int64  `gorm:"primary_key;autoIncrement"`
-	UserTelegramID int64  `gorm:"not null;foreignKey:TelegramID"`
-	FileID         string `gorm:"not null"`
-	FileType       string `gorm:"not null"`
-	Status         Status `gorm:"not null;default:initiated;check:status IN ('initiated', 'preparing', 'processing', 'completed', 'failed')"`
-	ConvertTo      string `gorm:"not null;default:jpg"`
-	MessageID      int64  `gorm:"default:null"`
+	ID             int64         `gorm:"primary_key;autoIncrement"`
+	UserTelegramID int64         `gorm:"not null;foreignKey:TelegramID"`
+	FileID         string        `gorm:"not null"`
+	FileType       string        `gorm:"not null"`
+	Status         shared.Status `gorm:"not null;default:initiated;check
+:status IN
+('initiated', 'preparing', 'processing', 'completed', 'failed')"`
+	ConvertTo string `gorm:"not null;default:jpg"`
+	MessageID int64  `gorm:"default:null"`
 }
 
 type PhotoRepository interface {
@@ -59,5 +52,5 @@ type PhotoUseCase interface {
 	GenerateKeyboardMarkup(buttonRows [][]tgbotapi.InlineKeyboardButton) tgbotapi.InlineKeyboardMarkup
 	GenerateMessage(fileType string, message *tgbotapi.Message, keyboard tgbotapi.InlineKeyboardMarkup) tgbotapi.MessageConfig
 	ValidateIfPhotoReadyToBeConverted(ID int64) (*Photo, error)
-	UpdatePhotoStatus(photo *Photo, status Status) error
+	UpdatePhotoStatus(photo *Photo, status shared.Status) error
 }

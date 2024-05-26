@@ -10,13 +10,14 @@ import (
 	"strconv"
 
 	"github.com/41x3n/Xom/core/domain"
+	interfaces "github.com/41x3n/Xom/interface"
 	"github.com/41x3n/Xom/shared"
 	"gorm.io/gorm"
 )
 
 type converter struct {
-	env      *shared.Env
-	telegram shared.TelegramService
+	env      *interfaces.Env
+	telegram interfaces.TelegramService
 	db       *gorm.DB
 }
 
@@ -93,7 +94,7 @@ func (c *converter) GetInputOutputFilePaths(photo *domain.Photo) (string, string
 	return inputPath, outputPath, nil
 }
 
-func NewFFMPEGService(env *shared.Env, telegram shared.TelegramService, db *gorm.DB) shared.FFMPEGService {
+func NewFFMPEGService(env *interfaces.Env, telegram interfaces.TelegramService, db *gorm.DB) interfaces.FFMPEGService {
 	return &converter{
 		env:      env,
 		telegram: telegram,

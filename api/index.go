@@ -3,15 +3,16 @@ package api
 import (
 	"strings"
 
+	interfaces "github.com/41x3n/Xom/interface"
 	"github.com/41x3n/Xom/shared"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"gorm.io/gorm"
 )
 
 type rootHandler struct {
-	env      *shared.Env
-	telegram shared.TelegramService
-	rabbitMQ shared.RabbitMQService
+	env      *interfaces.Env
+	telegram interfaces.TelegramService
+	rabbitMQ interfaces.RabbitMQService
 	db       *gorm.DB
 }
 
@@ -54,12 +55,16 @@ func (h *rootHandler) HandleMessages(update tgbotapi.Update, updateType shared.U
 		err = h.HandlePhoto(user, message)
 	}
 
+	if message.Voice != nil || (message.Document != nil && strings.Contains(message.Document.MimeType, "audio/")) {
+		err = h.HandleAudio(user, message)
+	}
+
 	return err
 }
 
-func NewRootHandler(env *shared.Env, telegram shared.TelegramService,
-	rabbitMQ shared.RabbitMQService,
+func NewRootHandler(env *interfaces.Env, telegram interfaces.TelegramService,
+	rabbitMQ interfaces.RabbitMQService,
 	db *gorm.DB,
-) shared.RootHandlerInterface {
+) interfaces.RootHandlerInterface {
 	return &rootHandler{env: env, telegram: telegram, rabbitMQ: rabbitMQ, db: db}
 }

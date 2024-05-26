@@ -7,6 +7,7 @@ import (
 	"log"
 	"time"
 
+	interfaces "github.com/41x3n/Xom/interface"
 	"github.com/41x3n/Xom/shared"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
@@ -21,8 +22,8 @@ const FileQueue = "file_queue"
 type rabbitMQ struct {
 	Conn          *amqp.Connection
 	Ch            *amqp.Channel
-	env           *shared.Env
-	FfmpegHandler shared.FFMPEGService
+	env           *interfaces.Env
+	FfmpegHandler interfaces.FFMPEGService
 }
 
 func (r *rabbitMQ) GetChannel() *amqp.Channel {
@@ -155,7 +156,7 @@ func (r *rabbitMQ) ackMessage(delivery amqp.Delivery, ackType bool) {
 }
 
 func NewRabbitMQService(conn *amqp.Connection, ch *amqp.Channel,
-	env *shared.Env, ffmpegHandler shared.FFMPEGService) (shared.RabbitMQService,
+	env *interfaces.Env, ffmpegHandler interfaces.FFMPEGService) (interfaces.RabbitMQService,
 	error) {
 	return &rabbitMQ{
 		Conn:          conn,

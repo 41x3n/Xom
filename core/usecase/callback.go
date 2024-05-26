@@ -58,7 +58,7 @@ func (cu *CallbackUseCase) MarkPhotoAsPreparing(photo *domain.Photo) error {
 	ctx, cancel := context.WithTimeout(context.Background(), cu.contextTimeout)
 	defer cancel()
 
-	photo.Status = domain.Preparing
+	photo.Status = shared.Preparing
 	err := cu.photoRepo.UpdateStatus(ctx, photo)
 
 	if err != nil {

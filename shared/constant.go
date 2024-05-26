@@ -22,3 +22,13 @@ type RabbitMQPayload struct {
 
 const DownloadFolder = "./downloads"
 const ConvertedFolder = "./converted"
+
+type Status string
+
+const (
+	Initiated  Status = "initiated"
+	Preparing  Status = "preparing"
+	Processing Status = "processing"
+	Completed  Status = "completed"
+	Failed     Status = "failed"
+)
