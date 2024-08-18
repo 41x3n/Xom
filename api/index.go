@@ -55,7 +55,7 @@ func (h *rootHandler) HandleMessages(update tgbotapi.Update, updateType shared.U
 		err = h.HandlePhoto(user, message)
 	}
 
-	if message.Voice != nil || (message.Document != nil && strings.Contains(message.Document.MimeType, "audio/")) {
+	if message.Voice != nil || message.Audio != nil || (message.Document != nil && strings.Contains(message.Document.MimeType, "audio/")) {
 		err = h.HandleAudio(user, message)
 	}
 

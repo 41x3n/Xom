@@ -11,6 +11,7 @@ import (
 const (
 	TableUser  = "users"
 	TablePhoto = "photos"
+	TableAudio = "audios"
 )
 
 type User struct {

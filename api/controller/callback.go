@@ -22,13 +22,13 @@ func NewCallbackController(cu domain.CallbackUseCase,
 }
 
 func (cc *CallbackController) HandleCallback(callback *tgbotapi.CallbackQuery) error {
-	photoId, command, convertTo, err := cc.cu.GetFileIDAndCommand(callback)
+	fileId, command, convertTo, err := cc.cu.GetFileIDAndCommand(callback)
 	if err != nil {
 		return err
 	}
 
 	if command == string(shared.PhotoCommand) {
-		photo, err := cc.cu.GetPhotoByID(photoId)
+		photo, err := cc.cu.GetPhotoByID(fileId)
 		if err != nil {
 			return err
 		}
@@ -63,6 +63,45 @@ func (cc *CallbackController) HandleCallback(callback *tgbotapi.CallbackQuery) e
 		msg.ReplyToMessageID = int(photo.MessageID)
 		if _, err = cc.TelegramAPI.Send(msg); err != nil {
 			return err
+		}
+	}
+
+	if command == string(shared.AudioCommand) {
+		audio, errOnFind := cc.cu.GetAudioByID(fileId)
+		if errOnFind != nil {
+			return errOnFind
+		}
+
+		if audio.Status == shared.Processing {
+			msg := tgbotapi.NewMessage(callback.Message.Chat.ID,
+				"Hey, your audio is still being processed. Please wait a bit longer.")
+			msg.ReplyToMessageID = int(audio.MessageID)
+			if _, errOnResponse := cc.TelegramAPI.Send(msg); errOnResponse != nil {
+				return errOnResponse
+			}
+			return nil
+		}
+
+		payload := shared.RabbitMQPayload{
+			Command: shared.AudioCommand,
+			ID:      audio.ID,
+		}
+
+		audio.Status = shared.Preparing
+		audio.ConvertTo = convertTo
+		if errOnPrep := cc.cu.MarkAudioAsPreparing(audio); errOnPrep != nil {
+			return errOnPrep
+		}
+
+		if errOnPublish := cc.RabbitMQ.PublishMessage(payload); errOnPublish != nil {
+			return errOnPublish
+		}
+
+		msg := tgbotapi.NewMessage(callback.Message.Chat.ID, "Hold on, "+
+			"your audio is being processed...")
+		msg.ReplyToMessageID = int(audio.MessageID)
+		if _, errOnSend := cc.TelegramAPI.Send(msg); errOnSend != nil {
+			return errOnSend
 		}
 	}
 

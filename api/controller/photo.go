@@ -18,17 +18,16 @@ func NewPhotoController(pu domain.PhotoUseCase, telegramAPI *tgbotapi.BotAPI) *P
 }
 
 func (pc *PhotoController) HandlePhoto(user *domain.User, message *tgbotapi.Message) error {
-	var photo *domain.Photo
-	fileID, fileType, err := pc.pu.GetFileIDAndType(message)
-	if err != nil {
-		return err
+	fileID, fileType, errFileType := pc.pu.GetFileIDAndType(message)
+	if errFileType != nil {
+		return errFileType
 	}
 
 	var messageID = message.MessageID
 
-	photo, err = pc.pu.SavePhotoId(user, fileID, fileType, messageID)
-	if err != nil {
-		return err
+	photo, errSave := pc.pu.SavePhotoId(user, fileID, fileType, messageID)
+	if errSave != nil {
+		return errSave
 	}
 
 	buttonRows := pc.pu.GenerateConvertOptions(fileType, photo.ID)
@@ -39,7 +38,7 @@ func (pc *PhotoController) HandlePhoto(user *domain.User, message *tgbotapi.Mess
 	keyboard := pc.pu.GenerateKeyboardMarkup(buttonRows)
 	msg := pc.pu.GenerateMessage(fileType, message, keyboard)
 
-	_, err = pc.TelegramAPI.Send(msg)
+	_, err := pc.TelegramAPI.Send(msg)
 	if err != nil {
 		return err
 	}

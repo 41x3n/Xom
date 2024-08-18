@@ -31,11 +31,11 @@ type RabbitMQService interface {
 type FFMPEGService interface {
 	HandleFiles(payload *shared.RabbitMQPayload) error
 	HandlePhotos(ID int64) error
-	ConvertPhoto(inputPath, outputPath string) error
+	ConvertFile(inputPath, outputPath string) error
 	ConvertImageToPDF(inputPath, outputPath string) error
-	SendFileToUser(photo *domain.Photo, outputPath,
+	SendFileToUser(media interface{}, outputPath,
 		message string) error
-	GetInputOutputFilePaths(photo *domain.Photo) (string, string, error)
+	GetInputOutputFilePaths(media interface{}) (string, string, error)
 	IsValidFormat(format string) bool
 	InformUserAboutError(userTelegramID, messageID int64,
 		errorText string) error

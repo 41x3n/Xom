@@ -27,6 +27,10 @@ func (c *converter) HandleFiles(payload *shared.RabbitMQPayload) error {
 	switch payload.Command {
 	case shared.PhotoCommand:
 		err = c.HandlePhotos(payload.ID)
+		break
+	case shared.AudioCommand:
+		err = c.HandleAudios(payload.ID)
+		break
 	default:
 		log.Printf("Unknown command: %s", payload.Command)
 	}
@@ -34,13 +38,26 @@ func (c *converter) HandleFiles(payload *shared.RabbitMQPayload) error {
 	return err
 }
 
-func (c *converter) GetInputOutputFilePaths(photo *domain.Photo) (string, string, error) {
+func (c *converter) GetInputOutputFilePaths(media interface{}) (string, string, error) {
 	telegramAPI := c.telegram.GetAPI()
 
-	fileID := photo.FileID
-	id := photo.ID
-	fileType := photo.FileType
-	convertTo := photo.ConvertTo
+	var fileID, fileType, convertTo string
+	var id int64
+
+	switch v := media.(type) {
+	case *domain.Photo:
+		fileID = v.FileID
+		fileType = v.FileType
+		convertTo = v.ConvertTo
+		id = v.ID
+	case *domain.Audio:
+		fileID = v.FileID
+		fileType = v.FileType
+		convertTo = v.ConvertTo
+		id = v.ID
+	default:
+		return "", "", fmt.Errorf("unsupported media type")
+	}
 
 	fileLink, err := telegramAPI.GetFileDirectURL(fileID)
 	if err != nil {
@@ -51,12 +68,10 @@ func (c *converter) GetInputOutputFilePaths(photo *domain.Photo) (string, string
 	if respErr != nil {
 		return "", "", respErr
 	}
-
 	defer shared.CloseResponseBody(resp.Body)
 
 	if resp.StatusCode != http.StatusOK {
-		return "", "", fmt.Errorf("error: Unexpected status code: %d",
-			resp.StatusCode)
+		return "", "", fmt.Errorf("error: Unexpected status code: %d", resp.StatusCode)
 	}
 
 	// Check if download folder exists. If not, create it.

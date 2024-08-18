@@ -6,6 +6,7 @@ const (
 	StartCommand CommandType = "start"
 	HelpCommand  CommandType = "help"
 	PhotoCommand CommandType = "photo"
+	AudioCommand CommandType = "audio"
 )
 
 type UpdateType string

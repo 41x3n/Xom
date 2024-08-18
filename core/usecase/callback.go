@@ -13,12 +13,14 @@ import (
 
 type CallbackUseCase struct {
 	photoRepo      domain.PhotoRepository
+	audioRepo      domain.AudioRepository
 	contextTimeout time.Duration
 }
 
-func NewCallbackUseCase(pr domain.PhotoRepository, timeout time.Duration) domain.CallbackUseCase {
+func NewCallbackUseCase(pr domain.PhotoRepository, ar domain.AudioRepository, timeout time.Duration) domain.CallbackUseCase {
 	return &CallbackUseCase{
 		photoRepo:      pr,
+		audioRepo:      ar,
 		contextTimeout: timeout,
 	}
 }
@@ -54,12 +56,41 @@ func (cu *CallbackUseCase) GetPhotoByID(photoId string) (*domain.Photo, error) {
 	return photo, err
 }
 
+func (cu *CallbackUseCase) GetAudioByID(audioId string) (*domain.Audio, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), cu.contextTimeout)
+	defer cancel()
+
+	id, parseErr := strconv.ParseInt(audioId, 10, 8)
+
+	if parseErr != nil {
+		return nil, parseErr
+	}
+
+	audio, err := cu.audioRepo.GetByID(ctx, id)
+
+	return audio, err
+}
+
 func (cu *CallbackUseCase) MarkPhotoAsPreparing(photo *domain.Photo) error {
 	ctx, cancel := context.WithTimeout(context.Background(), cu.contextTimeout)
 	defer cancel()
 
 	photo.Status = shared.Preparing
 	err := cu.photoRepo.UpdateStatus(ctx, photo)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (cu *CallbackUseCase) MarkAudioAsPreparing(audio *domain.Audio) error {
+	ctx, cancel := context.WithTimeout(context.Background(), cu.contextTimeout)
+	defer cancel()
+
+	audio.Status = shared.Preparing
+	err := cu.audioRepo.UpdateStatus(ctx, audio)
 
 	if err != nil {
 		return err

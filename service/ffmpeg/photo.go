@@ -48,7 +48,7 @@ func (c *converter) HandlePhotos(ID int64) error {
 	if photo.ConvertTo == "pdf" {
 		errConvert = c.ConvertImageToPDF(inputPath, outputPath)
 	} else {
-		errConvert = c.ConvertPhoto(inputPath, outputPath)
+		errConvert = c.ConvertFile(inputPath, outputPath)
 	}
 	if errConvert != nil {
 		var result *multierror.Error
@@ -93,7 +93,16 @@ func (c *converter) IsValidFormat(format string) bool {
 	return false
 }
 
-func (c *converter) ConvertPhoto(inputPath, outputPath string) error {
+func (c *converter) IsValidAudioFormat(format string) bool {
+	for _, validFormat := range domain.AudioFileTypeArray {
+		if format == validFormat {
+			return true
+		}
+	}
+	return false
+}
+
+func (c *converter) ConvertFile(inputPath, outputPath string) error {
 	err := ffmpeg.Input(inputPath).Output(outputPath).OverWriteOutput().Run()
 
 	return err
@@ -111,11 +120,22 @@ func (c *converter) ConvertImageToPDF(inputPath, outputPath string) error {
 	return nil
 }
 
-func (c *converter) SendFileToUser(photo *domain.Photo, outputPath, message string) error {
+func (c *converter) SendFileToUser(media interface{}, outputPath, message string) error {
 	telegramAPI := c.telegram.GetAPI()
 
-	userTelegramID := photo.UserTelegramID
-	fileFormat := photo.ConvertTo
+	var userTelegramID, messageId int64
+	var fileFormat string
+
+	switch v := media.(type) {
+	case *domain.Photo:
+		userTelegramID = v.UserTelegramID
+		fileFormat = v.ConvertTo
+		messageId = v.MessageID
+	case *domain.Audio:
+		userTelegramID = v.UserTelegramID
+		fileFormat = v.ConvertTo
+		messageId = v.MessageID
+	}
 
 	file, errFileOpen := os.Open(outputPath)
 	if errFileOpen != nil {
@@ -130,7 +150,7 @@ func (c *converter) SendFileToUser(photo *domain.Photo, outputPath, message stri
 	}
 	documentToBeSent := tgbotapi.NewDocument(userTelegramID, reader)
 	documentToBeSent.Caption = message
-	documentToBeSent.ReplyToMessageID = int(photo.MessageID)
+	documentToBeSent.ReplyToMessageID = int(messageId)
 
 	// Send the document
 	_, err := telegramAPI.Send(documentToBeSent)
