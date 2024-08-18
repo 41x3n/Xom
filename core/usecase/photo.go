@@ -109,8 +109,8 @@ func (pu *photoUsecase) GenerateKeyboardMarkup(
 func (pu *photoUsecase) GenerateMessage(fileType string, message *tgbotapi.Message,
 	keyboard tgbotapi.
 		InlineKeyboardMarkup) tgbotapi.MessageConfig {
-	msgText := fmt.Sprintf("You have uploaded a %s file. "+
-		"Please choose which format you want to convert.",
+	msgText := fmt.Sprintf("%s file detected! "+
+		"🎉 Now, choose your desired format for conversion.",
 		strings.ToUpper(fileType))
 	msg := tgbotapi.NewMessage(message.Chat.ID, msgText)
 	msg.ReplyMarkup = keyboard

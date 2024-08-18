@@ -14,11 +14,11 @@ func NewHelpController(telegramAPI *tgbotapi.BotAPI) *HelpController {
 }
 
 func (hc *HelpController) HandleHelpCommand(user *domain.User, message *tgbotapi.Message) error {
-	msgText := "Xom is your personal assistant for all your file conversion needs. You can convert files from one format to another, and also extract text from images. Here are the commands you can use:\n\n"
-	msgText += "/start - Start the bot\n"
-	msgText += "/help - Get help\n"
-	msgText += "/about - About Xom\n"
-	msgText += "Or simply send a file to get started!"
+	msgText := "Need a little guidance? Xom's got your back! 🌟\n\n"
+	msgText += "🔄 **Supported Conversions:**\n\n"
+	msgText += "🎵 **Audio Files:** Convert your tunes to any of these formats: mp4, mp3, wav, flac, ogg, aac, wma, m4a.\n\n"
+	msgText += "📷 **Image Files:** Turn your images into: jpg, jpeg, png, gif, pdf, webp, bmp, tif, tiff, ico, avif.\n\n"
+	msgText += "Just send me a file, and I’ll handle the rest. Let’s make those files fit your needs, effortlessly! 🎉"
 	msg := tgbotapi.NewMessage(message.Chat.ID, msgText)
 	_, err := hc.TelegramAPI.Send(msg)
 	return err

@@ -72,7 +72,7 @@ func (c *converter) HandlePhotos(ID int64) error {
 	}
 
 	errorSendPhoto := c.SendFileToUser(photo, outputPath,
-		"Here is your converted photo")
+		"✨ Here’s your converted photo!")
 	if errorSendPhoto != nil {
 		return errorSendPhoto
 	}

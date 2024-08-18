@@ -63,7 +63,7 @@ func (c *converter) HandleAudios(ID int64) error {
 	}
 
 	errorSendAudio := c.SendFileToUser(audio, outputPath,
-		"Here is your converted audio")
+		"✨ Here’s your converted audio!")
 	if errorSendAudio != nil {
 		return errorSendAudio
 	}

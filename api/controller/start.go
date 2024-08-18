@@ -18,9 +18,7 @@ func NewStartController(telegramAPI *tgbotapi.BotAPI) *StartController {
 func (sc *StartController) HandleStartCommand(user *domain.User, message *tgbotapi.Message) error {
 	var msgText string
 	if user.UserName != nil {
-		msgText = fmt.Sprintf("Howdy, %s! Welcome aboard the Xom express, "+
-			"your personal assistant for all your file conversion needs. "+
-			"Buckle up, send any file and enjoy the ride!", *user.UserName)
+		msgText = fmt.Sprintf("Hey there, %s! 🚀 Welcome to Xom, the magical file converter at your service. Drop a file here, and watch me work my magic. Need more details? Just type /help to see what I can do!", *user.UserName)
 	} else {
 		msgText = "Hello! Welcome to Xom, your butler to handle all your file conversion help."
 	}

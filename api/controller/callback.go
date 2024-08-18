@@ -58,7 +58,7 @@ func (cc *CallbackController) HandleCallback(callback *tgbotapi.CallbackQuery) e
 			return err
 		}
 
-		msg := tgbotapi.NewMessage(callback.Message.Chat.ID, "Hold on, "+
+		msg := tgbotapi.NewMessage(callback.Message.Chat.ID, "⏳ Hold tight..., "+
 			"your photo is being processed...")
 		msg.ReplyToMessageID = int(photo.MessageID)
 		if _, err = cc.TelegramAPI.Send(msg); err != nil {
@@ -97,7 +97,7 @@ func (cc *CallbackController) HandleCallback(callback *tgbotapi.CallbackQuery) e
 			return errOnPublish
 		}
 
-		msg := tgbotapi.NewMessage(callback.Message.Chat.ID, "Hold on, "+
+		msg := tgbotapi.NewMessage(callback.Message.Chat.ID, "⏳ Hold tight..., "+
 			"your audio is being processed...")
 		msg.ReplyToMessageID = int(audio.MessageID)
 		if _, errOnSend := cc.TelegramAPI.Send(msg); errOnSend != nil {
